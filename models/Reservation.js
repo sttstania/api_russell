@@ -21,8 +21,6 @@ const reservationSchema = new mongoose.Schema({
     type: Date,
     required: [true, 'Check-out date is required']
   }, 
-}, {
-    timestamps
-  });
+}, { timestamps: true });
 
 module.exports = mongoose.model("Reservation", reservationSchema);
