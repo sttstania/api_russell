@@ -18,7 +18,7 @@
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
-    "express": "^5.2.1",
+    "express": "^4.22.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.20.3",
     "swagger-jsdoc": "^6.2.8",

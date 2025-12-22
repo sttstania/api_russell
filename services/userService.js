@@ -1,49 +1,65 @@
-const { deleteMany } = require('../models/Catway');
 const User = require('../models/User');
 
-//get all users
-exports.getAllUsers = () => User.find();
 
-//get :id
-exports.getUserById = (id) => User.findById();
-
-// Get :email
-exports.getUserByEmail = (email) => User.findOne(email);
-
-//Create a new user
-exports.register = async (name, email, password) => {
-
-    //check if email exists
-    const existingUser = await User.findOne({ email: data.email });
-    if (existingUser) {
-        const error = new Error('Email already in use');
-        error.code = 'EMAIL_EXISTS';
-        throw error;
-    }
-
-    // Create user
-    const user = await User.create({
-        name: data.name,
-        email: data.email,
-        passwordHash: data.password           //hash dans model
+// POST
+exports.createUser = async ({ name, email, password }) => {
+    const newUser = new User({
+        name,
+        email,
+        passwordHash: password // hash in models
     });
-
-    await user.save();
-
-    return {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-    };
-};
-
-//Update User
-exports.updatedUser = async (id, data) => {
-    if ('createdAt' in data) delete data.createdAt;
-
-    const UpdatedUser = await User.findByIdAndUpdate(id, data, {new: true});
-    return this.updatedUser
+    await newUser.save();
+    return newUser;
 }
 
-// Delete User
-exports.deleteUser = (id) => User.findByIdAndDelete(id);
+// get all
+exports.getAllUsers = async () => {
+    return await User.find().select('-passwordHash');
+}
+
+// get by id
+exports.getUserById = async (id) => { 
+    return await User.findById(id).select('-passwordHash');
+}
+
+// get by Email
+exports.getUserByEmail = async (email) => { 
+    return await User.findOne({ email }).select('-passwordHash');
+}
+
+// PUT 
+exports.updateUser = async (id, data) => {
+    if (data.password) {
+        data.passwordHash = data.password;
+        delete data.password;
+    }
+
+    delete data._id;
+    delete data.createdAt;
+    delete data.updatedAt;
+    return await User;
+};
+
+// PATCH
+exports.patchUser = async (id, data) => {
+    if (data.password) {
+        data.passwordHash = data.password;
+        delete data.password;
+  }
+    delete data._id;
+    delete data.createdAt;
+
+    return await User.findByIdAndUpdate(
+        id,
+        { $set: data }, 
+        { 
+            new: true, 
+            runValidators: true 
+        }
+    );
+};
+
+// Delete
+exports.deleteUser = async (id) => {
+    return await User.findByIdAndDelete(id);
+};
