@@ -1,0 +1,32 @@
+<!-- views/users/new.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create User</title>
+</head>
+<body>
+    <%- include('partials/header') %>
+    <main>
+        <h1>Create User</h1>
+
+        <form action="/users/newUser" method="POST">
+            <label>Name</label>
+            <input type="text" name="name" required />
+
+            <label>Email</label>
+            <input type="email" name="email" required />
+
+            <label>Password</label>
+            <input type="password" name="password" required />
+
+            <button type="submit">Create</button>
+        </form>
+
+        <% if (typeof error !== 'undefined') { %>
+        <p style="color:red"><%= error %></p>
+    <% } %>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

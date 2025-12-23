@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -20,5 +21,18 @@ const userSchema = new mongoose.Schema({
     minLength: [8, 'Password must be at least 8 characters long']
   }
 }, { timestamps: true });
+
+
+// hash password before save
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("passwordHash")) return next();
+  this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
+  next();
+});
+
+// compare password 
+userSchema.methods.comparePassword = async function(password) {
+  return await bcrypt.compare(password, this.passwordHash);
+};
 
 module.exports = mongoose.model("User", userSchema);
